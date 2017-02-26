@@ -73,17 +73,31 @@ $(document).ready(function() {
     .addTo(map);
 
   // Set zoom control position
-  map.zoomControl.setPosition('topright');
+  map.zoomControl.setPosition('topleft');
 
   // Arrays to store markers
   var markers = [];
 
   // Generate markers, add them to the array and to the map
   for (i in points) {
-    var m = L.marker([points[i].Latitude, points[i].Longitude])
-      .bindPopup(points[i].Title)
-      .addTo(map);
+    var m = L.marker([points[i].Latitude, points[i].Longitude]);
+
+    if (points[i].Title) {
+      m.bindPopup(makePopup(points[i]));
+    }
+    
     markers.push(m);
+    m.addTo(map);
+  }
+
+  function makePopup(p) {
+    popup = '<p><b>' + points[i].Title + '</b>'
+    if (points[i].Description) {
+      popup += '<br>' + points[i].Description + '</p>';
+    } else {
+      popup += '</p>';
+    }
+    return popup;
   }
 
   // Update table every time the map is moved/zoomed
@@ -148,5 +162,13 @@ $(document).ready(function() {
     .addAttribution('<a href="https://github.com/JackDougherty/datavizforall">DataVizForAll</a>')
     .addAttribution('<a href="http://leafletjs.com">Leaflet</a>')
     .addTo(map);
+
+  // Add Mapzen search
+  L.control.geocoder('mapzen-VBmxRzC', {
+    position: 'topright',
+    autocomplete: true,
+    focus: true,  // prioritize results near center of map
+    expanded: false,
+  }).addTo(map);
 
 });
